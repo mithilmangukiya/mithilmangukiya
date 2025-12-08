@@ -1,18 +1,50 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import Sidebar from './components/Sidebar'
 import './App.css'
 import Dashboard from './Pages/Dashboard'
 import OrderManagement from './Pages/OrderManagement'
 import Login from './Pages/Login'
 import SignUp from './Pages/SignUp'
-import { Avatar, Input } from 'antd'
+import { Avatar, Input, Dropdown, message } from 'antd'
 import SearchIcon from './assets/search.png'
 import BellIcon from './assets/Bell outline.png'
 import { UserOutlined } from '@ant-design/icons'
+import { logout as logoutApi, me as meApi } from './api/auth'
 
 function App() {
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedPage, setSelectedPage] = useState('dashboard')
+  const [user, setUser] = useState(null)
+  const [authChecked, setAuthChecked] = useState(false)
+
+  useEffect(() => {
+    const checkSession = async () => {
+      try {
+        const current = await meApi()
+        setUser(current)
+        setSelectedPage('dashboard')
+      } catch (error) {
+        setUser(null)
+        setSelectedPage('login')
+      } finally {
+        setAuthChecked(true)
+      }
+    }
+    checkSession()
+  }, [])
+
+  const handleLogout = async () => {
+    try {
+      await logoutApi()
+    } catch (error) {
+      // proceed even if logout request fails
+      console.error(error)
+    } finally {
+      message.success('Logged out')
+      setUser(null)
+      setSelectedPage('login')
+    }
+  }
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen)
@@ -23,15 +55,24 @@ function App() {
   }
 
   const renderPage = () => {
+    if (!authChecked) {
+      return <div className="flex items-center justify-center h-full">Loading...</div>
+    }
+
+    if (!user && selectedPage !== 'login' && selectedPage !== 'sign-up') {
+      setSelectedPage('login')
+      return <Login onSwitchPage={setSelectedPage} onAuthSuccess={setUser} />
+    }
+
     switch (selectedPage) {
       case 'dashboard':
         return <Dashboard />
       case 'order-management':
         return <OrderManagement />
       case 'login':
-        return <Login onSwitchPage={setSelectedPage} />
+        return <Login onSwitchPage={setSelectedPage} onAuthSuccess={setUser} />
       case 'sign-up':
-        return <SignUp onSwitchPage={setSelectedPage} />
+        return <SignUp onSwitchPage={setSelectedPage} onAuthSuccess={setUser} />
       default:
         return <Dashboard />
     }
@@ -83,7 +124,19 @@ function App() {
             />
             <img src={BellIcon} alt="bell" className="w-6 h-6" />
             {/* <Switch  size="default"  /> */}
-            <Avatar size={40} style={{ backgroundColor: '#87d068' }} icon={<UserOutlined />} />
+            <Dropdown
+              menu={{
+                items: [
+                  { key: 'profile', label: 'Profile (placeholder)', disabled: true },
+                  { type: 'divider' },
+                  { key: 'logout', label: 'Logout', onClick: handleLogout },
+                ],
+              }}
+              trigger={['click']}
+              placement="bottomRight"
+            >
+              <Avatar size={40} style={{ backgroundColor: '#87d068', cursor: 'pointer' }} icon={<UserOutlined />} />
+            </Dropdown>
           </div>
         </header>
         {/* Content Area */}

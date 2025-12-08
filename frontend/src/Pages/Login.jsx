@@ -1,9 +1,24 @@
-import { Button, Checkbox, Form, Input, Typography } from 'antd'
+import { useState } from 'react'
+import { Button, Checkbox, Form, Input, Typography, message } from 'antd'
 import { LockOutlined, MailOutlined } from '@ant-design/icons'
+import { login as loginApi } from '../api/auth'
 
-const Login = ({ onSwitchPage }) => {
-  const handleFinish = (values) => {
-    console.log('Login submit', values)
+const Login = ({ onSwitchPage, onAuthSuccess }) => {
+  const [loading, setLoading] = useState(false)
+  const [form] = Form.useForm()
+
+  const handleFinish = async (values) => {
+    setLoading(true)
+    try {
+      const loggedIn = await loginApi({ email: values.email, password: values.password })
+      message.success('Logged in successfully')
+      onAuthSuccess?.(loggedIn)
+      onSwitchPage?.('dashboard')
+    } catch (error) {
+      message.error(error.message || 'Login failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -14,7 +29,7 @@ const Login = ({ onSwitchPage }) => {
           <Typography.Text type="secondary">Login to access your dashboard</Typography.Text>
         </div>
 
-        <Form layout="vertical" onFinish={handleFinish} requiredMark={false} className="space-y-4">
+        <Form form={form} layout="vertical" onFinish={handleFinish} requiredMark={false} className="space-y-4">
           <Form.Item
             label="Email"
             name="email"
@@ -41,7 +56,7 @@ const Login = ({ onSwitchPage }) => {
             <Button type="link" className="p-0 text-emerald-600">Forgot password?</Button>
           </div>
 
-          <Button type="primary" htmlType="submit" className="w-full bg-emerald-600" size="large">
+          <Button type="primary" htmlType="submit" className="w-full bg-emerald-600" size="large" loading={loading}>
             Login
           </Button>
         </Form>

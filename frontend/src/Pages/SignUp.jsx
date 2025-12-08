@@ -1,9 +1,24 @@
-import { Button, Checkbox, Form, Input, Typography } from 'antd'
+import { useState } from 'react'
+import { Button, Checkbox, Form, Input, Typography, message } from 'antd'
 import { LockOutlined, MailOutlined, UserOutlined } from '@ant-design/icons'
+import { signup as signupApi } from '../api/auth'
 
-const SignUp = ({ onSwitchPage }) => {
-  const handleFinish = (values) => {
-    console.log('Sign up submit', values)
+const SignUp = ({ onSwitchPage, onAuthSuccess }) => {
+  const [loading, setLoading] = useState(false)
+  const [form] = Form.useForm()
+
+  const handleFinish = async (values) => {
+    setLoading(true)
+    try {
+      const signedUp = await signupApi({ name: values.name, email: values.email, password: values.password })
+      message.success('Account created and logged in')
+      onAuthSuccess?.(signedUp)
+      onSwitchPage?.('dashboard')
+    } catch (error) {
+      message.error(error.message || 'Sign up failed')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -14,7 +29,7 @@ const SignUp = ({ onSwitchPage }) => {
           <Typography.Text type="secondary">Sign up to start managing your store</Typography.Text>
         </div>
 
-        <Form layout="vertical" onFinish={handleFinish} requiredMark={false} className="space-y-4">
+        <Form form={form} layout="vertical" onFinish={handleFinish} requiredMark={false} className="space-y-4">
           <Form.Item
             label="Full name"
             name="name"
@@ -81,7 +96,7 @@ const SignUp = ({ onSwitchPage }) => {
             </Checkbox>
           </Form.Item>
 
-          <Button type="primary" htmlType="submit" className="w-full bg-emerald-600" size="large">
+          <Button type="primary" htmlType="submit" className="w-full bg-emerald-600" size="large" loading={loading}>
             Create account
           </Button>
         </Form>
