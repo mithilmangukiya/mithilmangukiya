@@ -2,6 +2,10 @@ import logo from '../assets/E-logo.png'
 import MenuIcon from '../assets/Menu.png'
 import { Menu } from 'antd';
 import { HomeFilled, ShoppingCartOutlined } from '@ant-design/icons';
+import { GoPeople } from "react-icons/go";
+import { RiCoupon2Line } from "react-icons/ri";
+
+
 
 const Sidebar = ({ isOpen, toggleSidebar, onMenuClick, selectedKey }) => {
   const items = [
@@ -21,10 +25,12 @@ const Sidebar = ({ isOpen, toggleSidebar, onMenuClick, selectedKey }) => {
         },
         {
           key: 'customers',
+          icon: <GoPeople   style={{ fontSize: '22px' }} />,
           label: 'Customers',
         },
         {
           key: 'coupon-code',
+          icon: <RiCoupon2Line  style={{ fontSize: '22px' }} />,
           label: 'Coupon Code',
         },
         {
@@ -77,6 +83,20 @@ const Sidebar = ({ isOpen, toggleSidebar, onMenuClick, selectedKey }) => {
         },
       ],
     },
+    {
+      type: 'group',
+      label: <span className="text-gray-500">Auth</span>,
+      children: [
+        {
+          key: 'login',
+          label: 'Login',
+        },
+        {
+          key: 'sign-up',
+          label: 'Sign Up',
+        },
+      ],
+    },
   ];
 
   return (
@@ -88,7 +108,19 @@ const Sidebar = ({ isOpen, toggleSidebar, onMenuClick, selectedKey }) => {
         .ant-menu-item-selected .ant-menu-title-content {
           color: white !important;
         }
-        .ant-menu-item-selected .anticon {
+        .ant-menu-item .anticon,
+        .ant-menu-item svg {
+          color: #6B7280 !important;
+        }
+        .ant-menu-item:hover .anticon,
+        .ant-menu-item:hover svg {
+          color: #6B7280 !important;
+        }
+        .ant-menu-item-selected .anticon,
+        .ant-menu-item-selected svg {
+          color: white !important;
+        }
+        .ant-menu-item-selected .ant-menu-title-content a {
           color: white !important;
         }
       `}</style>

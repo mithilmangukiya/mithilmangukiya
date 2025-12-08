@@ -1,17 +1,16 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import Sidebar from './components/Sidebar'
 import './App.css'
 import Dashboard from './Pages/Dashboard'
 import OrderManagement from './Pages/OrderManagement'
-import { Avatar, Input, Switch } from 'antd'
+import Login from './Pages/Login'
+import SignUp from './Pages/SignUp'
+import { Avatar, Input } from 'antd'
 import SearchIcon from './assets/search.png'
 import BellIcon from './assets/Bell outline.png'
 import { UserOutlined } from '@ant-design/icons'
 
 function App() {
-  const [count, setCount] = useState(0)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [selectedPage, setSelectedPage] = useState('dashboard')
 
@@ -29,6 +28,10 @@ function App() {
         return <Dashboard />
       case 'order-management':
         return <OrderManagement />
+      case 'login':
+        return <Login onSwitchPage={setSelectedPage} />
+      case 'sign-up':
+        return <SignUp onSwitchPage={setSelectedPage} />
       default:
         return <Dashboard />
     }
@@ -40,6 +43,10 @@ function App() {
         return 'Dashboard'
       case 'order-management':
         return 'Order Management'
+      case 'login':
+        return 'Login'
+      case 'sign-up':
+        return 'Sign Up'
       default:
         return 'Dashboard'
     }
