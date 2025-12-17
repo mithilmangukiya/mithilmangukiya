@@ -5,6 +5,7 @@ import Dashboard from './Pages/Dashboard'
 import OrderManagement from './Pages/OrderManagement'
 import Login from './Pages/Login'
 import SignUp from './Pages/SignUp'
+import AdminRole from './Pages/AdminRole'
 import { Avatar, Input, Dropdown, message } from 'antd'
 import SearchIcon from './assets/search.png'
 import BellIcon from './assets/Bell outline.png'
@@ -69,6 +70,8 @@ function App() {
         return <Dashboard />
       case 'order-management':
         return <OrderManagement />
+      case 'admin-role':
+        return <AdminRole />
       case 'login':
         return <Login onSwitchPage={setSelectedPage} onAuthSuccess={setUser} />
       case 'sign-up':
@@ -84,6 +87,8 @@ function App() {
         return 'Dashboard'
       case 'order-management':
         return 'Order Management'
+      case 'admin-role':
+        return 'Admin Role'
       case 'login':
         return 'Login'
       case 'sign-up':
